@@ -24,6 +24,8 @@ public class EmployeeService {
         Employee employee = new Employee();
         employee.setName(dto.getName());
         employee.setRole(dto.getRole());
+        employee.setEmail(dto.getEmail());
+        employee.setPassword(dto.getPassword());
         return repo.save(employee);
     }
 

@@ -1,7 +1,6 @@
 package com.example.backendmysql.controller;
 
 import java.util.List;
-import java.util.Optional;
 
 import com.example.backendmysql.dto.EmployeeDTO;
 import jakarta.validation.Valid;
@@ -13,6 +12,7 @@ import com.example.backendmysql.entity.Employee;
 
 @RestController
 @RequestMapping("/employee")
+@CrossOrigin(origins = "http://localhost:5173")
 public class EmployeeController {
     @Autowired
     private EmployeeService service;
