@@ -5,6 +5,7 @@ import java.util.List;
 import com.example.backendmysql.dto.EmployeeDTO;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import com.example.backendmysql.service.EmployeeService;
@@ -22,12 +23,17 @@ public class EmployeeController {
         return service.getAllEmployees();
     }
 
+    @PostMapping("/login")
+    public ResponseEntity<?> login(@RequestBody Employee emp){
+        return service.login(emp);
+    }
+
     @PostMapping("/add")
     public Employee createEmployee(@Valid @RequestBody EmployeeDTO dto) {
         return service.createEmployee(dto);
     }
 
-    @PutMapping("/{id}")
+    @PutMapping("/put/{id}")
     public Employee updateEmployee(@PathVariable Long id, @RequestBody Employee employee) {
         return service.updateEmployee(id, employee);
     }

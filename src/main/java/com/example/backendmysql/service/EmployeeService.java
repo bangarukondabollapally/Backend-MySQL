@@ -5,6 +5,8 @@ import java.util.List;
 import com.example.backendmysql.dto.EmployeeDTO;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
 import com.example.backendmysql.entity.Employee;
@@ -34,6 +36,10 @@ public class EmployeeService {
         if (existingEmployee != null) {
             existingEmployee.setName(newemployee.getName());
             existingEmployee.setRole(newemployee.getRole());
+            existingEmployee.setEmail(newemployee.getEmail());
+            if(newemployee.getPassword()!=null && newemployee.getPassword()!=""){
+                existingEmployee.setPassword(newemployee.getPassword());
+            }
             return repo.save(existingEmployee);
         }
         return null;
@@ -45,5 +51,15 @@ public class EmployeeService {
             return "Employee deleted successfully";
         }
         return "employee not found";
+    }
+
+    public ResponseEntity<?> login(Employee emp){
+        Employee existingEmp = repo.findByEmailAndPassword(emp.getEmail(), emp.getPassword());
+        if(existingEmp==null){
+            return ResponseEntity
+                    .status(HttpStatus.UNAUTHORIZED)
+                    .body("Email or password is incorrect");
+        }
+        return ResponseEntity.ok("Login Succesfull!");
     }
 }
