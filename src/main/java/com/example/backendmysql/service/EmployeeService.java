@@ -7,6 +7,7 @@ import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import com.example.backendmysql.entity.Employee;
@@ -18,6 +19,9 @@ public class EmployeeService {
     @Autowired
     private EmployeeRepository repo;
 
+    @Autowired
+    private PasswordEncoder encoder;
+
     public List<Employee> getAllEmployees() {
         return repo.findAll();
     }
@@ -27,7 +31,7 @@ public class EmployeeService {
         employee.setName(dto.getName());
         employee.setRole(dto.getRole());
         employee.setEmail(dto.getEmail());
-        employee.setPassword(dto.getPassword());
+        employee.setPassword(encoder.encode(dto.getPassword()));
         return repo.save(employee);
     }
 
@@ -37,8 +41,8 @@ public class EmployeeService {
             existingEmployee.setName(newemployee.getName());
             existingEmployee.setRole(newemployee.getRole());
             existingEmployee.setEmail(newemployee.getEmail());
-            if(newemployee.getPassword()!=null && newemployee.getPassword()!=""){
-                existingEmployee.setPassword(newemployee.getPassword());
+            if (newemployee.getPassword() != null && !newemployee.getPassword().isEmpty()) {
+                existingEmployee.setPassword(encoder.encode(newemployee.getPassword()));
             }
             return repo.save(existingEmployee);
         }
@@ -53,13 +57,18 @@ public class EmployeeService {
         return "employee not found";
     }
 
-    public ResponseEntity<?> login(Employee emp){
-        Employee existingEmp = repo.findByEmailAndPassword(emp.getEmail(), emp.getPassword());
-        if(existingEmp==null){
+    public ResponseEntity<?> login(Employee emp) {
+        Employee existingEmp = repo.findByEmail(emp.getEmail());
+        if (existingEmp == null) {
             return ResponseEntity
                     .status(HttpStatus.UNAUTHORIZED)
-                    .body("Email or password is incorrect");
+                    .body("Email is wrong");
         }
-        return ResponseEntity.ok("Login Succesfull!");
+        if (!encoder.matches(emp.getPassword(), existingEmp.getPassword())) {
+            return ResponseEntity
+                    .status(HttpStatus.UNAUTHORIZED)
+                    .body("Password is wrong...");
+        }
+        return ResponseEntity.ok("Login Successful!");
     }
 }
