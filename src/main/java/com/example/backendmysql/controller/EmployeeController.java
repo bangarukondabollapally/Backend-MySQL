@@ -27,6 +27,10 @@ public class EmployeeController {
     public ResponseEntity<?> login(@RequestBody Employee emp){
         return service.login(emp);
     }
+    @GetMapping("/{id}")
+    public Employee getEmployeeById(@PathVariable Long id){
+        return service.getEmployeeById(id);
+    }
 
     @PostMapping("/add")
     public Employee createEmployee(@Valid @RequestBody EmployeeDTO dto) {

@@ -22,8 +22,15 @@ public class EmployeeService {
     @Autowired
     private PasswordEncoder encoder;
 
+    @Autowired
+    private JWTService JService;
+
     public List<Employee> getAllEmployees() {
         return repo.findAll();
+    }
+
+    public Employee getEmployeeById(Long id){
+        return repo.findById(id).orElse(null);
     }
 
     public Employee createEmployee(@RequestBody @Valid EmployeeDTO dto) {
@@ -69,6 +76,7 @@ public class EmployeeService {
                     .status(HttpStatus.UNAUTHORIZED)
                     .body("Password is wrong...");
         }
-        return ResponseEntity.ok("Login Successful!");
+        String token = JService.generateToken(emp.getEmail());
+        return ResponseEntity.ok(token);
     }
 }
