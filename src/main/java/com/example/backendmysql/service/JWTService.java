@@ -11,13 +11,37 @@ import java.util.Date;
 public class JWTService {
     private final String secret = "mysecretkey1234mysecretkey123456789";
 
+    public SecretKey getkey(){
+        return Keys.hmacShaKeyFor(secret.getBytes());
+    }
+
     public String generateToken(String email){
-        SecretKey key = Keys.hmacShaKeyFor(secret.getBytes());
         return Jwts.builder()
                 .subject(email)
                 .issuedAt(new Date())
                 .expiration(new Date(System.currentTimeMillis()+1000*60*20))
-                .signWith(key)
+                .signWith(getkey())
                 .compact();
+    }
+
+    public boolean validateToken(String token){
+        try{
+            Jwts.parser()
+                    .verifyWith(getkey())
+                    .build()
+                    .parseSignedClaims(token);
+            return true;
+        }catch (Exception e){
+            return false;
+        }
+    }
+
+    public String extractUser(String token){
+        return Jwts.parser()
+                .verifyWith(getkey())
+                .build()
+                .parseSignedClaims(token)
+                .getPayload()
+                .getSubject();
     }
 }
