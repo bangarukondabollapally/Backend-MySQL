@@ -6,6 +6,7 @@ import com.example.backendmysql.dto.EmployeeDTO;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import com.example.backendmysql.service.EmployeeService;
@@ -19,6 +20,7 @@ public class EmployeeController {
     private EmployeeService service;
 
     @GetMapping("/get")
+    @PreAuthorize("hasRole('ADMIN")
     public List<Employee> getAllEmployees() {
         return service.getAllEmployees();
     }
