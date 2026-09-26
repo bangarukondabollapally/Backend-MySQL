@@ -20,7 +20,7 @@ public class EmployeeController {
     private EmployeeService service;
 
     @GetMapping("/get")
-    @PreAuthorize("hasRole('ADMIN")
+    @PreAuthorize("hasRole('ADMIN')")
     public List<Employee> getAllEmployees() {
         return service.getAllEmployees();
     }
@@ -40,11 +40,13 @@ public class EmployeeController {
     }
 
     @PutMapping("/put/{id}")
+    @PreAuthorize("hasRole('ADMIN')")
     public Employee updateEmployee(@PathVariable Long id, @RequestBody Employee employee) {
         return service.updateEmployee(id, employee);
     }
 
     @DeleteMapping("/delete/{id}")
+    @PreAuthorize("hasRole('ADMIN')")
     public String deleteEmployee(@PathVariable Long id) {
         return service.deleteEmployee(id);
     }

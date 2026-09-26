@@ -36,7 +36,7 @@ public class JWTAuthentication extends OncePerRequestFilter {
             if (jwtService.validateToken(token)) {
                 String email = jwtService.extractUser(token);
 
-                Employee emp = repo.findByEmail(email);
+                Employee emp = repo.findFirstByEmail(email);
 
                 if (emp != null) {
                     UsernamePasswordAuthenticationToken auth =

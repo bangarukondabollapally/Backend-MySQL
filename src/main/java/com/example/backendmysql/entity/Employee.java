@@ -1,4 +1,5 @@
 package com.example.backendmysql.entity;
+import com.example.backendmysql.enums.Role;
 
 import jakarta.persistence.*;
 
@@ -10,7 +11,7 @@ public class Employee {
     private Long id;
     private String name;
     @Enumerated(EnumType.STRING)
-    private String role;
+    private Role role;
     public String email;
     public String password;
 
@@ -22,7 +23,7 @@ public class Employee {
         return this.name;
     }
 
-    public String getRole() {
+    public Role getRole() {
         return this.role;
     }
 
@@ -42,7 +43,7 @@ public class Employee {
         this.name = name;
     }
 
-    public void setRole(String role) {
+    public void setRole(Role role) {
         this.role = role;
     }
 

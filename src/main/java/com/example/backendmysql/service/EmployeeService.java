@@ -1,8 +1,10 @@
 package com.example.backendmysql.service;
+import com.example.backendmysql.enums.Role;
 
 import java.util.List;
 
 import com.example.backendmysql.dto.EmployeeDTO;
+import com.example.backendmysql.dto.LoginResponseDTO;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -36,7 +38,7 @@ public class EmployeeService {
     public Employee createEmployee(@RequestBody @Valid EmployeeDTO dto) {
         Employee employee = new Employee();
         employee.setName(dto.getName());
-        employee.setRole(dto.getRole());
+        employee.setRole(Role.valueOf(dto.getRole().toUpperCase()));
         employee.setEmail(dto.getEmail());
         employee.setPassword(encoder.encode(dto.getPassword()));
         return repo.save(employee);
@@ -65,7 +67,7 @@ public class EmployeeService {
     }
 
     public ResponseEntity<?> login(Employee emp) {
-        Employee existingEmp = repo.findByEmail(emp.getEmail());
+        Employee existingEmp = repo.findFirstByEmail(emp.getEmail());
         if (existingEmp == null) {
             return ResponseEntity
                     .status(HttpStatus.UNAUTHORIZED)
@@ -76,7 +78,8 @@ public class EmployeeService {
                     .status(HttpStatus.UNAUTHORIZED)
                     .body("Password is wrong...");
         }
-        String token = JService.generateToken(emp.getEmail());
-        return ResponseEntity.ok(token);
+        String token = JService.generateToken(existingEmp.getEmail());
+        LoginResponseDTO dto = new LoginResponseDTO(token, existingEmp.getId(), existingEmp.getEmail(), existingEmp.getRole().name());
+        return ResponseEntity.ok(dto);
     }
 }
